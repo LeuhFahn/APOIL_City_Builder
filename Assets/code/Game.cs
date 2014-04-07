@@ -23,7 +23,6 @@ public class Game : MonoBehaviour {
 	{
 		if(Input.GetMouseButtonDown(0))
 		{
-			Debug.Log (Input.mousePosition);
 			Vector3 directionCamera = camera.GetComponent<Camera>().transform.forward;
 			RaycastHit hit;
 			Debug.DrawRay(camera.transform.position, 100*directionCamera);
@@ -38,7 +37,7 @@ public class Game : MonoBehaviour {
 
 	void OnGUI()
 	{
-		if (GUI.Button(new Rect(10, 70, 100, 60), "Fin du tour "+nNbTour.ToString()))
+		if (GUI.Button(new Rect(Screen.width - 120, Screen.height - 100, 100, 60), "Fin du tour "+nNbTour.ToString()))
 		{
 			++nNbTour;
 
