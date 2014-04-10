@@ -11,14 +11,14 @@ public class Game : MonoBehaviour {
 	int nNbHexToColor;
 
 	List<GameObject> temp_HexToColor;
-	GameObject[] temp_HexToColor_net;
-
+	List<GameObject> Hexagon;
+	
 	// Use this for initialization
 	void Start () 
 	{
 		nNbTour = 0;
 		temp_HexToColor = new List<GameObject> ();
-		temp_HexToColor_net = new GameObject[64];
+		Hexagon = new List<GameObject> ();
 		nNbHexToColor = 0;
 	}
 	
@@ -35,9 +35,6 @@ public class Game : MonoBehaviour {
 				Debug.Log (hit.collider.name);
 				temp_HexToColor.Add (hit.collider.gameObject);
 
-				temp_HexToColor_net[nNbHexToColor] = hit.collider.gameObject;
-				nNbHexToColor++;
-
 				hit.collider.gameObject.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.blue;
 			}
 		}
@@ -48,26 +45,33 @@ public class Game : MonoBehaviour {
 		if (GUI.Button(new Rect(Screen.width - 120, Screen.height - 100, 100, 60), "Fin du tour "+nNbTour.ToString()))
 		{
 			++nNbTour;
+
+			//Hexagon[12].transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.red;
+
 			/*
 			foreach(GameObject hex in temp_HexToColor)
 			{
 				hex.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.red;
 			}*/
-			int i = 0;
+
 			foreach(GameObject hex in temp_HexToColor)
 			{
-				networkView.RPC("ColorationFromNetwork", RPCMode.All, temp_HexToColor[i]);
-				i++;
+				networkView.RPC("ColorationFromNetwork", RPCMode.AllBuffered, hex.GetComponent<hex>().nId);
 			}
 
 			temp_HexToColor.Clear();
 		}
 	}
 
+	public void AddHexagon(GameObject hex)
+	{
+		Hexagon.Add (hex);
+	}
+
 	// All RPC calls need the @RPC attribute!
 	[RPC]
-	void ColorationFromNetwork(GameObject HexToColor)
+	void ColorationFromNetwork(int nId)
 	{
-		HexToColor.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.red;
+		Hexagon[nId].transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.red;
 	}
 }

@@ -6,6 +6,7 @@ public class Grid : MonoBehaviour {
 	//following public variable is used to store the hex model prefab;
 	//instantiate it by dragging the prefab on this variable using unity editor
 	public GameObject Hex;
+	public GameObject game;
 	//next two variables can also be instantiated using unity editor
 	public int gridWidthInHexes = 10;
 	public int gridHeightInHexes = 10;
@@ -55,7 +56,7 @@ public class Grid : MonoBehaviour {
 	{
 		//Game object which is the parent of all the hex tiles
 		GameObject hexGridGO = new GameObject("HexGrid");
-		
+		int nId = 0;
 		for (float y = 0; y < gridHeightInHexes; y++)
 		{
 			for (float x = 0; x < gridWidthInHexes; x++)
@@ -66,6 +67,9 @@ public class Grid : MonoBehaviour {
 				Vector2 gridPos = new Vector2(x, y);
 				hex.transform.position = calcWorldCoord(gridPos);
 				hex.transform.parent = hexGridGO.transform;
+				hex.GetComponent<hex>().nId = nId;
+				game.GetComponent<Game>().AddHexagon(hex);
+				++nId;
 			}
 		}
 	}
