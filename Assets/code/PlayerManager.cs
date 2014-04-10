@@ -8,7 +8,7 @@ public class PlayerManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		m_Game = objetGame.GetComponent<Game> ();
+//		m_Game = objetGame.GetComponent<Game> ();
 	}
 	
 	// Update is called once per frame

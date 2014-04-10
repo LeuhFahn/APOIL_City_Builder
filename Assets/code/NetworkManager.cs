@@ -18,7 +18,7 @@ public class NetworkManager : MonoBehaviour {
 
 	void OnPlayerConnected(NetworkPlayer player)	
 	{
-		spawnPlayer(player);	
+		//spawnPlayer(player);	
 	}
 
 	void spawnPlayer(NetworkPlayer player)	
