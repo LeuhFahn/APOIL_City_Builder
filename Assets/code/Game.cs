@@ -6,13 +6,15 @@ public class Game : MonoBehaviour {
 
 	public GameObject camera;
 	public LayerMask mask;
+	
+	public GameObject menuConstruction;
 
 	int nNbTour;
 	int nNbHexToColor;
 
 	List<GameObject> temp_HexToColor;
 	List<GameObject> Hexagon;
-	
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -25,17 +27,19 @@ public class Game : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if(Input.GetMouseButtonDown(0))
+		if(Input.GetMouseButtonDown(0) && menuConstruction.activeSelf == false)
 		{
 			Vector3 directionCamera = camera.GetComponent<Camera>().transform.forward;
 			RaycastHit hit;
 			Debug.DrawRay(camera.transform.position, 100*directionCamera);
 			if(Physics.Raycast (camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition),out hit, 100, mask))
 			{
-				Debug.Log (hit.collider.name);
+				//Debug.Log (hit.collider.name);
 				temp_HexToColor.Add (hit.collider.gameObject);
 
 				hit.collider.gameObject.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.blue;
+				gameObject.GetComponent<CGestionMenuConstruction>().SetCaseSelected(hit.collider.gameObject);
+				NGUITools.SetActive(menuConstruction, true);
 			}
 		}
 	}
