@@ -3,7 +3,8 @@ using System.Collections;
 
 public class CAnimMenu : MonoBehaviour {
 
-    public GameObject origin;
+	public bool m_bNegatif;
+	public bool m_bRotation;
     Vector2 fPositionFinal;
     Vector2 fPositionDepart;
     Vector2 tmpPosition;
@@ -21,21 +22,27 @@ public class CAnimMenu : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        if (fTimer >= fTimerMax)
-        {
-            fPositionDepart = fPositionFinal;
-            fPositionFinal = Random.insideUnitCircle * 5.0f;
-            fTimer = 0.0f;
-            fTimerMax = Random.insideUnitCircle.x * 10.0f;
-        }
-        
+		if(m_bNegatif)
+		{
+	        if (fTimer >= fTimerMax)
+	        {
+	            fPositionDepart = fPositionFinal;
+	            fPositionFinal = Random.insideUnitCircle * 5.0f;
+	            fTimer = 0.0f;
+	            fTimerMax = Random.insideUnitCircle.x * 10.0f;
+	        }
+	        
+	        tmpPosition.x = CApoilMath.InterpolationLinear(fTimer, 0.0f, fTimerMax, fPositionDepart.x, fPositionFinal.x);
+	        tmpPosition.y = CApoilMath.InterpolationLinear(fTimer, 0.0f, fTimerMax, fPositionDepart.y, fPositionFinal.y);
 
+	        transform.localPosition = new Vector3(tmpPosition.x, tmpPosition.y, 0);
 
-        tmpPosition.x = CApoilMath.InterpolationLinear(fTimer, 0.0f, fTimerMax, fPositionDepart.x, fPositionFinal.x);
-        tmpPosition.y = CApoilMath.InterpolationLinear(fTimer, 0.0f, fTimerMax, fPositionDepart.y, fPositionFinal.y);
+	        fTimer += Time.deltaTime;
+		}
 
-        transform.localPosition = new Vector3(tmpPosition.x, tmpPosition.y, 0);
-
-        fTimer += Time.deltaTime;
+		if(m_bRotation)
+		{
+			transform.Rotate(0, Mathf.Cos (Time.time) * 10.0f/180.0f,0);
+		}
 	}
 }

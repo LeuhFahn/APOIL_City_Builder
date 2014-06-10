@@ -49,25 +49,22 @@ public class Game : MonoBehaviour {
 
 	void OnGUI()
 	{
-		if (GUI.Button(new Rect(Screen.width - 120, Screen.height - 100, 100, 60), "Fin du tour "+nNbTour.ToString()))
+		/*if (GUI.Button(new Rect(Screen.width - 120, Screen.height - 100, 100, 60), "Fin du tour "+nNbTour.ToString()))
 		{
-			++nNbTour;
 
-			//Hexagon[12].transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.red;
+		}*/
+	}
 
-			/*
-			foreach(GameObject hex in temp_HexToColor)
-			{
-				hex.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.red;
-			}*/
-
-			foreach(GameObject hex in temp_HexToColor)
-			{
-				networkView.RPC("ColorationFromNetwork", RPCMode.AllBuffered, hex.GetComponent<hex>().nId);
-			}
-
-			temp_HexToColor.Clear();
+	public void FinDeTour()
+	{
+		++nNbTour;
+		
+		foreach(GameObject hex in temp_HexToColor)
+		{
+			networkView.RPC("ColorationFromNetwork", RPCMode.AllBuffered, hex.GetComponent<hex>().nId);
 		}
+		
+		temp_HexToColor.Clear();
 	}
 
 	public void AddHexagon(GameObject hex)
