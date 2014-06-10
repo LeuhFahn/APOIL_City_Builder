@@ -12,7 +12,8 @@ public class CGestionMenuConstruction : MonoBehaviour {
 		e_Tour
 	}
 
-	public GameObject prefabBatiment;
+	public GameObject prefabChapelle;
+    public GameObject prefabBatiment;
 	GameObject caseSelected;
 
 	// Use this for initialization
@@ -32,8 +33,40 @@ public class CGestionMenuConstruction : MonoBehaviour {
 
 	public void MyClickFunction(GameObject SpriteConstruction)
 	{
-		GameObject batObj = Instantiate(prefabBatiment, caseSelected.transform.position, Quaternion.identity) as GameObject;
+
+        InstanciateBatiment(SpriteConstruction.tag, caseSelected.transform.position, new Vector3(1,0,0));
+        object[] param = { SpriteConstruction.tag, caseSelected.transform.position, new Vector3(0, 1, 0) };
+        networkView.RPC("InstanciateBatiment", RPCMode.AllBuffered, SpriteConstruction.tag, caseSelected.transform.position, new Vector3(0, 1, 0));
+
 		Debug.Log (SpriteConstruction.tag);
 		NGUITools.SetActive(gameObject.GetComponent<Game>().menuConstruction, false);
 	}
+
+    // All RPC calls need the @RPC attribute!
+    [RPC]
+    public void InstanciateBatiment(string name, Vector3 position, Vector3 vColor)
+    {
+        GameObject batObj;
+        Color color = new Color(vColor.x, vColor.y, vColor.z, 1.0f);
+        switch (name)
+        {
+            case "chapelle":
+            {
+                batObj = Instantiate(prefabChapelle, position, Quaternion.identity) as GameObject;
+                break;
+            }
+            default:
+            {
+                batObj = Instantiate(prefabBatiment, position, Quaternion.identity) as GameObject;
+                break;
+            }
+        }
+
+        foreach (Transform child in batObj.transform)
+        {
+            child.gameObject.renderer.material.color = color;
+        }
+
+        
+    }
 }

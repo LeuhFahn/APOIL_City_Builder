@@ -35,11 +35,14 @@ public class Game : MonoBehaviour {
 			if(Physics.Raycast (camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition),out hit, 100, mask))
 			{
 				//Debug.Log (hit.collider.name);
-				temp_HexToColor.Add (hit.collider.gameObject);
-
-				hit.collider.gameObject.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.blue;
-				gameObject.GetComponent<CGestionMenuConstruction>().SetCaseSelected(hit.collider.gameObject);
-				NGUITools.SetActive(menuConstruction, true);
+                if (!hit.collider.gameObject.GetComponent<hex>().bBlocked)
+                {
+                    temp_HexToColor.Add(hit.collider.gameObject);
+                    hit.collider.gameObject.GetComponent<hex>().bBlocked = true;
+                    hit.collider.gameObject.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.blue;
+                    gameObject.GetComponent<CGestionMenuConstruction>().SetCaseSelected(hit.collider.gameObject);
+                    NGUITools.SetActive(menuConstruction, true);
+                }
 			}
 		}
 	}
@@ -77,5 +80,6 @@ public class Game : MonoBehaviour {
 	void ColorationFromNetwork(int nId)
 	{
 		Hexagon[nId].transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.red;
+        Hexagon[nId].GetComponent<hex>().bBlocked = true;
 	}
 }
