@@ -43,17 +43,17 @@ public class Connect : MonoBehaviour {
 		GUI.Label(new Rect(10,50,labelW,elementsH),"Server Port");
 		matchPort=GUI.TextField(new Rect(fieldX, 50, fieldW, elementsH), matchPort);
 		//conversion de string en int pour les éléments nécessaires
-		int connectPort = int.Parse(matchPort);
-		//Bouton de connexion
-		if(GUI.Button(new Rect(10,120,150,30),"Connect to server")){
-			Network.Connect(matchIP,connectPort); 
-		}
+        /*	int connectPort = int.Parse(matchPort);
+            //Bouton de connexion
+            if(GUI.Button(new Rect(10,120,150,30),"Connect to server")){
+                Network.Connect(matchIP,connectPort); 
+            }
 		//Bouton d'initialisation du serveur
 		if(GUI.Button(new Rect(10,150,150,30),"Start a server")){
 			bool useNat = !Network.HavePublicAddress();
 			Network.InitializeServer(maxClients, connectPort, useNat); 
-		}
-	}
+		}*/
+    }
 	
 	void Client_GUI(){
 		GUI.Label(new Rect(10,10,500,100),"Connecte au serveur :"+matchIP);
@@ -66,4 +66,19 @@ public class Connect : MonoBehaviour {
 	void Connecting_GUI(){
 		GUI.Label(new Rect(10,10,500,100),"Connexion au serveur...");
 	}
+
+
+    public void ConnectToServer()
+    {
+        int connectPort = int.Parse(matchPort);
+        Network.Connect(matchIP, connectPort);
+    }
+
+    public void StartAServer()
+    {
+        int connectPort = int.Parse(matchPort);
+        bool useNat = !Network.HavePublicAddress();
+        Network.InitializeServer(maxClients, connectPort, useNat); 
+    }
+
 }
