@@ -45,6 +45,11 @@ public class Game : MonoBehaviour {
                 }
 			}
 		}
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
 	}
 
 	void OnGUI()
