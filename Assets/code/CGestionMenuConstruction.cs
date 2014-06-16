@@ -67,6 +67,7 @@ public class CGestionMenuConstruction : MonoBehaviour {
             child.gameObject.renderer.material.color = color;
         }
 
-        
+        gameObject.GetComponent<Game>().BlockHex(caseSelected.GetComponent<hex>().nId);
+       
     }
 }

@@ -77,11 +77,21 @@ public class Game : MonoBehaviour {
 		Hexagon.Add (hex);
 	}
 
+    public void BlockHex(int nId)
+    {
+        networkView.RPC("BlockHexFromNetwork", RPCMode.AllBuffered, nId);
+    }
+
 	// All RPC calls need the @RPC attribute!
 	[RPC]
 	void ColorationFromNetwork(int nId)
 	{
 		Hexagon[nId].transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.red;
-        Hexagon[nId].GetComponent<hex>().bBlocked = true;
 	}
+
+    [RPC]
+    void BlockHexFromNetwork(int nId)
+    {
+        Hexagon[nId].GetComponent<hex>().bBlocked = true;
+    }
 }
