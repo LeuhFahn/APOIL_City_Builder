@@ -8,9 +8,13 @@ public class Game : MonoBehaviour {
 	public LayerMask mask;
 	
 	public GameObject menuConstruction;
+    public GameObject menuIsServer;
 
 	int nNbTour;
 	int nNbHexToColor;
+    int nNbPlayerHaveFinishTurn;
+
+    bool m_bCanPlay;
 
 	List<GameObject> temp_HexToColor;
 	List<GameObject> Hexagon;
@@ -24,35 +28,41 @@ public class Game : MonoBehaviour {
 		temp_HexToColor = new List<GameObject> ();
 		Hexagon = new List<GameObject> ();
 		nNbHexToColor = 0;
+        nNbPlayerHaveFinishTurn = 0;
+        m_bCanPlay = true;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		if(Input.GetMouseButtonDown(0) && menuConstruction.activeSelf == false)
-		{
-			Vector3 directionCamera = camera.GetComponent<Camera>().transform.forward;
-			RaycastHit hit;
-			Debug.DrawRay(camera.transform.position, 100*directionCamera);
-			if(Physics.Raycast (camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition),out hit, 100, mask))
-			{
-				//Debug.Log (hit.collider.name);
-                if (!hit.collider.gameObject.GetComponent<hex>().bBlocked)
+        if (m_bCanPlay)
+        {
+            if (Input.GetMouseButtonDown(0) && menuConstruction.activeSelf == false)
+            {
+                Vector3 directionCamera = camera.GetComponent<Camera>().transform.forward;
+                RaycastHit hit;
+                Debug.DrawRay(camera.transform.position, 100 * directionCamera);
+                if (Physics.Raycast(camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition), out hit, 100, mask))
                 {
-                    temp_HexToColor.Add(hit.collider.gameObject);
-                    hit.collider.gameObject.GetComponent<hex>().bBlocked = true;
-                    hit.collider.gameObject.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.blue;
-                    gameObject.GetComponent<CGestionMenuConstruction>().SetCaseSelected(hit.collider.gameObject);
-                    NGUITools.SetActive(menuConstruction, true);
+                    //Debug.Log (hit.collider.name);
+                    if (!hit.collider.gameObject.GetComponent<hex>().bBlocked)
+                    {
+                        temp_HexToColor.Add(hit.collider.gameObject);
+                        hit.collider.gameObject.GetComponent<hex>().bBlocked = true;
+                        hit.collider.gameObject.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.blue;
+                        gameObject.GetComponent<CGestionMenuConstruction>().SetCaseSelected(hit.collider.gameObject);
+                        NGUITools.SetActive(menuConstruction, true);
+                    }
                 }
-			}
-		}
+            }
+        }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
         }
 
+        //Gestion camera!
         if (Input.GetMouseButtonDown(2))
         {
             m_vInitPosMous = GetMousePositionInScreen();
@@ -66,6 +76,19 @@ public class Game : MonoBehaviour {
         }
 
         camera.GetComponent<CCamera>().ZoomInOut(5.0f * Input.GetAxis("Mouse ScrollWheel"));
+
+        //gestion des tours
+        if (Network.peerType == NetworkPeerType.Server)
+        {
+            menuIsServer.SetActive(true);
+            menuIsServer.transform.FindChild("Label").GetComponent<UILabel>().text = nNbPlayerHaveFinishTurn.ToString() + "/" + (Network.connections.Length+1).ToString();
+
+            if (nNbPlayerHaveFinishTurn == Network.connections.Length + 1)
+            {
+                m_bCanPlay = true;
+                nNbPlayerHaveFinishTurn = 0;
+            }
+        }
 	}
 
     
@@ -84,14 +107,27 @@ public class Game : MonoBehaviour {
 
 	public void FinDeTour()
 	{
-		++nNbTour;
-		
-		foreach(GameObject hex in temp_HexToColor)
-		{
-			networkView.RPC("ColorationFromNetwork", RPCMode.AllBuffered, hex.GetComponent<hex>().nId);
-		}
-		
-		temp_HexToColor.Clear();
+        if (m_bCanPlay)
+        {
+            ++nNbTour;
+
+            foreach (GameObject hex in temp_HexToColor)
+            {
+                networkView.RPC("ColorationFromNetwork", RPCMode.AllBuffered, hex.GetComponent<hex>().nId);
+            }
+
+            temp_HexToColor.Clear();
+
+            if (Network.peerType == NetworkPeerType.Server)
+            {
+                PlayerFinishTurn();
+            }
+            else
+            {
+                networkView.RPC("PlayerFinishTurn", RPCMode.Server);
+            }
+            m_bCanPlay = false;
+        }
 	}
 
 	public void AddHexagon(GameObject hex)
@@ -115,5 +151,11 @@ public class Game : MonoBehaviour {
     void BlockHexFromNetwork(int nId)
     {
         Hexagon[nId].GetComponent<hex>().bBlocked = true;
+    }
+
+    [RPC]
+    void PlayerFinishTurn()
+    {
+        ++nNbPlayerHaveFinishTurn;
     }
 }
