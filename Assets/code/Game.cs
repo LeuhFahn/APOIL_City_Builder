@@ -15,6 +15,8 @@ public class Game : MonoBehaviour {
 	List<GameObject> temp_HexToColor;
 	List<GameObject> Hexagon;
 
+    Vector3 m_vInitPosMous;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -50,7 +52,27 @@ public class Game : MonoBehaviour {
         {
             Application.Quit();
         }
+
+        if (Input.GetMouseButtonDown(2))
+        {
+            m_vInitPosMous = GetMousePositionInScreen();
+        }
+
+        if (Input.GetMouseButton(2))
+        {
+            Vector3 vDeltaMousePos = GetMousePositionInScreen() - m_vInitPosMous;
+            camera.GetComponent<CCamera>().MoveHorizontal(vDeltaMousePos.x);
+            camera.GetComponent<CCamera>().MoveVertical(vDeltaMousePos.y);
+        }
+
+        camera.GetComponent<CCamera>().ZoomInOut(5.0f * Input.GetAxis("Mouse ScrollWheel"));
 	}
+
+    
+    Vector3 GetMousePositionInScreen()
+    {
+        return new Vector3(Input.mousePosition.x / (float)Screen.width, Input.mousePosition.y / (float)Screen.height, 0.0f);
+    }
 
 	void OnGUI()
 	{
