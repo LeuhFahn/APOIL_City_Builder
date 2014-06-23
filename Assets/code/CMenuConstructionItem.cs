@@ -17,13 +17,13 @@ public class CMenuConstructionItem : MonoBehaviour {
             case CGestionMenuConstruction.EConstruction.e_Chapelle:
             {
                 m_nCoutBois = 10;
-                m_nCoutBois = 10;
+                m_nCoutPierre = 10;
                 break;
             }
             default:
             {
                 m_nCoutBois = 0;
-                m_nCoutBois = 0;
+                m_nCoutPierre = 0;
                 break;
             }
         }

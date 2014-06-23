@@ -12,9 +12,6 @@ public class CGestionMenuConstruction : MonoBehaviour {
 		e_Tour
 	}
 
-    int m_nRessourcesBois;
-    int m_nRessourcesPierre;
-
 	public GameObject prefabChapelle;
     public GameObject prefabBatiment;
 	GameObject caseSelected;
@@ -23,8 +20,6 @@ public class CGestionMenuConstruction : MonoBehaviour {
 	void Start () {
 		caseSelected = null;
 
-        m_nRessourcesBois = 100;
-        m_nRessourcesPierre = 100;
 	}
 	
 	// Update is called once per frame
@@ -39,10 +34,9 @@ public class CGestionMenuConstruction : MonoBehaviour {
 
 	public void SelectBatimentToConstruct(GameObject SpriteConstruction, int nCoutBois, int nCoutPierre)
 	{
-        if (nCoutBois >= m_nRessourcesBois && nCoutPierre >= m_nRessourcesBois)
+        if (gameObject.GetComponent<CGestionRessources>().CanBuild(nCoutBois, nCoutPierre))
         {
-            m_nRessourcesBois -= nCoutBois;
-            m_nRessourcesPierre -= nCoutPierre;
+            gameObject.GetComponent<CGestionRessources>().AddRemoveRessources(nCoutBois, nCoutPierre);
 
             InstanciateBatiment(SpriteConstruction.tag, caseSelected.transform.position, new Vector3(1, 0, 0));
             object[] param = { SpriteConstruction.tag, caseSelected.transform.position, new Vector3(0, 1, 0) };
