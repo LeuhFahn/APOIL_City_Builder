@@ -37,7 +37,7 @@ public class Game : MonoBehaviour {
 	{
         if (m_bCanPlay)
         {
-            if (Input.GetMouseButtonDown(0) && menuConstruction.activeSelf == false)
+            if (Input.GetMouseButtonDown(1) && menuConstruction.activeSelf == false)
             {
                 Vector3 directionCamera = camera.GetComponent<Camera>().transform.forward;
                 RaycastHit hit;
@@ -47,7 +47,7 @@ public class Game : MonoBehaviour {
                     //Debug.Log (hit.collider.name);
                     if (!hit.collider.gameObject.GetComponent<hex>().bBlocked)
                     {
-                        temp_HexToColor.Add(hit.collider.gameObject);
+                       // temp_HexToColor.Add(hit.collider.gameObject);
                         hit.collider.gameObject.GetComponent<hex>().bBlocked = true;
                         hit.collider.gameObject.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.blue;
                         gameObject.GetComponent<CGestionMenuConstruction>().SetCaseSelected(hit.collider.gameObject);
@@ -111,12 +111,12 @@ public class Game : MonoBehaviour {
         {
             ++nNbTour;
 
-            foreach (GameObject hex in temp_HexToColor)
+            /*foreach (GameObject hex in temp_HexToColor)
             {
                 networkView.RPC("ColorationFromNetwork", RPCMode.AllBuffered, hex.GetComponent<hex>().nId);
             }
 
-            temp_HexToColor.Clear();
+            temp_HexToColor.Clear();*/
 
             if (Network.peerType == NetworkPeerType.Server)
             {

@@ -27,6 +27,13 @@ public class CGestionMenuConstruction : MonoBehaviour {
 	
 	}
 
+    public void CloseMenu()
+    {
+        NGUITools.SetActive(gameObject.GetComponent<Game>().menuConstruction, false);
+        caseSelected.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.white;
+        caseSelected = null;
+    }
+
 	public void SetCaseSelected(GameObject caseToSelect)
 	{
 		caseSelected = caseToSelect;
@@ -41,10 +48,12 @@ public class CGestionMenuConstruction : MonoBehaviour {
             InstanciateBatiment(SpriteConstruction.tag, caseSelected.transform.position, new Vector3(1, 0, 0));
             object[] param = { SpriteConstruction.tag, caseSelected.transform.position, new Vector3(0, 1, 0) };
             networkView.RPC("InstanciateBatiment", RPCMode.AllBuffered, SpriteConstruction.tag, caseSelected.transform.position, new Vector3(0, 1, 0));
+
+            CloseMenu();
         }
 
-		Debug.Log (SpriteConstruction.tag);
-		NGUITools.SetActive(gameObject.GetComponent<Game>().menuConstruction, false);
+		
+		
 	}
 
     // All RPC calls need the @RPC attribute!
