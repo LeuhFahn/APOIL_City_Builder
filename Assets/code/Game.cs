@@ -8,6 +8,7 @@ public class Game : MonoBehaviour {
 	public LayerMask mask;
 	
 	public GameObject menuConstruction;
+    public GameObject menuMainDoeuvre;
     public GameObject menuIsServer;
 
 	int nNbTour;
@@ -39,7 +40,7 @@ public class Game : MonoBehaviour {
 	{
         if (m_bCanPlay)
         {
-            if (Input.GetMouseButtonDown(1) && menuConstruction.activeSelf == false)
+            if ((Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(0))  && menuConstruction.activeSelf == false)
             {
                 Vector3 directionCamera = camera.GetComponent<Camera>().transform.forward;
                 RaycastHit hit;
@@ -47,13 +48,17 @@ public class Game : MonoBehaviour {
                 if (Physics.Raycast(camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition), out hit, 100, mask))
                 {
                     //Debug.Log (hit.collider.name);
-                    if (!hit.collider.gameObject.GetComponent<hex>().bBlocked)
+                    if ((Input.GetMouseButtonDown(1) && !hit.collider.gameObject.GetComponent<hex>().bBlocked))
                     {
-                       // temp_HexToColor.Add(hit.collider.gameObject);
                         hit.collider.gameObject.GetComponent<hex>().bBlocked = true;
                         hit.collider.gameObject.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.blue;
                         gameObject.GetComponent<CGestionMenuConstruction>().SetCaseSelected(hit.collider.gameObject);
                         NGUITools.SetActive(menuConstruction, true);
+                    }
+
+                    if ((Input.GetMouseButtonDown(0)))
+                    {
+                        NGUITools.SetActive(menuMainDoeuvre, true);
                     }
                 }
             }

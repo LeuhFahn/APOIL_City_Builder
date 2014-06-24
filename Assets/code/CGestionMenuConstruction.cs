@@ -45,7 +45,7 @@ public class CGestionMenuConstruction : MonoBehaviour {
             gameObject.GetComponent<CGestionRessources>().AddRemoveRessources(nCoutBois, nCoutPierre);
 
             InstanciateBatiment(SpriteConstruction.tag, caseSelected.transform.position, new Vector3(1, 0, 0));
-            object[] param = { SpriteConstruction.tag, caseSelected.transform.position, new Vector3(0, 1, 0) };
+            //object[] param = { SpriteConstruction.tag, caseSelected.transform.position, new Vector3(0, 1, 0) };
             networkView.RPC("InstanciateBatiment", RPCMode.AllBuffered, SpriteConstruction.tag, caseSelected.transform.position, new Vector3(0, 1, 0));
 
             CloseMenu();
@@ -85,6 +85,7 @@ public class CGestionMenuConstruction : MonoBehaviour {
         }
 
         gameObject.GetComponent<Game>().AddNewBatiment(batObj);
+        caseSelected.GetComponent<hex>().SetBatiment(batObj);
 
         gameObject.GetComponent<Game>().BlockHex(caseSelected.GetComponent<hex>().nId);
        
