@@ -19,7 +19,6 @@ public class CGestionMenuConstruction : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		caseSelected = null;
-
 	}
 	
 	// Update is called once per frame
@@ -31,7 +30,7 @@ public class CGestionMenuConstruction : MonoBehaviour {
     {
         NGUITools.SetActive(gameObject.GetComponent<Game>().menuConstruction, false);
         caseSelected.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.white;
-        caseSelected = null;
+        //caseSelected = null;
     }
 
 	public void SetCaseSelected(GameObject caseToSelect)
@@ -66,20 +65,26 @@ public class CGestionMenuConstruction : MonoBehaviour {
         {
             case "chapelle":
             {
-                batObj = Instantiate(prefabChapelle, position, Quaternion.identity) as GameObject;
+                batObj = Instantiate(prefabBatiment, position, Quaternion.identity) as GameObject;
+                batObj.GetComponent<CBatiment>().InitSite(EConstruction.e_Chapelle);
                 break;
             }
             default:
             {
                 batObj = Instantiate(prefabBatiment, position, Quaternion.identity) as GameObject;
+                batObj.GetComponent<CBatiment>().InitSite(EConstruction.e_Collise);
                 break;
             }
         }
 
-        foreach (Transform child in batObj.transform)
+        Transform chantier = batObj.transform.FindChild("chantier");
+
+        foreach (Transform child in chantier)
         {
             child.gameObject.renderer.material.color = color;
         }
+
+        gameObject.GetComponent<Game>().AddNewBatiment(batObj);
 
         gameObject.GetComponent<Game>().BlockHex(caseSelected.GetComponent<hex>().nId);
        

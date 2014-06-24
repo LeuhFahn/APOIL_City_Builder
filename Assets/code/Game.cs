@@ -18,6 +18,7 @@ public class Game : MonoBehaviour {
 
 	List<GameObject> temp_HexToColor;
 	List<GameObject> Hexagon;
+    List<GameObject> Batiments; 
 
     Vector3 m_vInitPosMous;
 
@@ -27,6 +28,7 @@ public class Game : MonoBehaviour {
 		nNbTour = 0;
 		temp_HexToColor = new List<GameObject> ();
 		Hexagon = new List<GameObject> ();
+        Batiments = new List<GameObject>();
 		nNbHexToColor = 0;
         nNbPlayerHaveFinishTurn = 0;
         m_bCanPlay = true;
@@ -85,16 +87,32 @@ public class Game : MonoBehaviour {
 
             if (nNbPlayerHaveFinishTurn == Network.connections.Length + 1)
             {
-                m_bCanPlay = true;
-                nNbPlayerHaveFinishTurn = 0;
+                StartNewTurn();
+                networkView.RPC("StartNewTurnFromNetwork", RPCMode.AllBuffered);
             }
         }
 	}
 
+    void StartNewTurn()
+    {
+        ++nNbTour;
+        nNbPlayerHaveFinishTurn = 0;
+        /*m_bCanPlay = true;
+
+        foreach (GameObject bat in Batiments)
+        {
+            bat.GetComponent<CBatiment>().StartNewTurn();
+        }*/
+    }
     
     Vector3 GetMousePositionInScreen()
     {
         return new Vector3(Input.mousePosition.x / (float)Screen.width, Input.mousePosition.y / (float)Screen.height, 0.0f);
+    }
+
+    public void AddNewBatiment(GameObject newBat)
+    {
+        Batiments.Add(newBat);
     }
 
 	void OnGUI()
@@ -157,5 +175,15 @@ public class Game : MonoBehaviour {
     void PlayerFinishTurn()
     {
         ++nNbPlayerHaveFinishTurn;
+    }
+
+    [RPC]
+    void StartNewTurnFromNetwork()
+    {
+        m_bCanPlay = true;
+        foreach (GameObject bat in Batiments)
+        {
+            bat.GetComponent<CBatiment>().StartNewTurn();
+        }
     }
 }
