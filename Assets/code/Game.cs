@@ -11,9 +11,11 @@ public class Game : MonoBehaviour {
     public GameObject menuMainDoeuvre;
     public GameObject menuIsServer;
 
-	int nNbTour;
-	int nNbHexToColor;
-    int nNbPlayerHaveFinishTurn;
+	int m_nNbTour;
+	int m_nNbHexToColor;
+    int m_nNbPlayerHaveFinishTurn;
+    int m_nNbMainDoeuvre;
+    int m_nNbMainDoeuvreDispo;
 
     bool m_bCanPlay;
 
@@ -26,13 +28,16 @@ public class Game : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		nNbTour = 0;
+		m_nNbTour = 0;
 		temp_HexToColor = new List<GameObject> ();
 		Hexagon = new List<GameObject> ();
         Batiments = new List<GameObject>();
-		nNbHexToColor = 0;
-        nNbPlayerHaveFinishTurn = 0;
+		m_nNbHexToColor = 0;
+        m_nNbPlayerHaveFinishTurn = 0;
         m_bCanPlay = true;
+        m_nNbMainDoeuvre = 5;
+        m_nNbMainDoeuvreDispo = m_nNbMainDoeuvre;
+
 	}
 	
 	// Update is called once per frame
@@ -40,7 +45,8 @@ public class Game : MonoBehaviour {
 	{
         if (m_bCanPlay)
         {
-            if ((Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(0))  && menuConstruction.activeSelf == false)
+            if ((Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(0))  && menuConstruction.activeSelf == false
+                                                                              && menuMainDoeuvre.activeSelf == false)
             {
                 Vector3 directionCamera = camera.GetComponent<Camera>().transform.forward;
                 RaycastHit hit;
@@ -50,15 +56,12 @@ public class Game : MonoBehaviour {
                     //Debug.Log (hit.collider.name);
                     if ((Input.GetMouseButtonDown(1) && !hit.collider.gameObject.GetComponent<hex>().bBlocked))
                     {
-                        hit.collider.gameObject.GetComponent<hex>().bBlocked = true;
-                        hit.collider.gameObject.transform.FindChild("render").GetComponent<SpriteRenderer>().color = Color.blue;
-                        gameObject.GetComponent<CGestionMenuConstruction>().SetCaseSelected(hit.collider.gameObject);
-                        NGUITools.SetActive(menuConstruction, true);
+                        gameObject.GetComponent<CGestionMenuConstruction>().OpenMenu(hit.collider.gameObject);
                     }
 
                     if ((Input.GetMouseButtonDown(0)))
                     {
-                        NGUITools.SetActive(menuMainDoeuvre, true);
+                        gameObject.GetComponent<CGestionMenuMainDoeuvre>().OpenMenu(hit.collider.gameObject);
                     }
                 }
             }
@@ -69,7 +72,24 @@ public class Game : MonoBehaviour {
             Application.Quit();
         }
 
-        //Gestion camera!
+        GestionCamera();
+
+        //gestion des tours
+        if (Network.peerType == NetworkPeerType.Server)
+        {
+            menuIsServer.SetActive(true);
+            menuIsServer.transform.FindChild("Label").GetComponent<UILabel>().text = m_nNbPlayerHaveFinishTurn.ToString() + "/" + (Network.connections.Length+1).ToString();
+
+            if (m_nNbPlayerHaveFinishTurn == Network.connections.Length + 1)
+            {
+                StartNewTurn();
+                networkView.RPC("StartNewTurnFromNetwork", RPCMode.AllBuffered);
+            }
+        }
+	}
+
+    void GestionCamera()
+    {
         if (Input.GetMouseButtonDown(2))
         {
             m_vInitPosMous = GetMousePositionInScreen();
@@ -83,25 +103,12 @@ public class Game : MonoBehaviour {
         }
 
         camera.GetComponent<CCamera>().ZoomInOut(5.0f * Input.GetAxis("Mouse ScrollWheel"));
-
-        //gestion des tours
-        if (Network.peerType == NetworkPeerType.Server)
-        {
-            menuIsServer.SetActive(true);
-            menuIsServer.transform.FindChild("Label").GetComponent<UILabel>().text = nNbPlayerHaveFinishTurn.ToString() + "/" + (Network.connections.Length+1).ToString();
-
-            if (nNbPlayerHaveFinishTurn == Network.connections.Length + 1)
-            {
-                StartNewTurn();
-                networkView.RPC("StartNewTurnFromNetwork", RPCMode.AllBuffered);
-            }
-        }
-	}
+    }
 
     void StartNewTurn()
     {
-        ++nNbTour;
-        nNbPlayerHaveFinishTurn = 0;
+        ++m_nNbTour;
+        m_nNbPlayerHaveFinishTurn = 0;
         /*m_bCanPlay = true;
 
         foreach (GameObject bat in Batiments)
@@ -132,7 +139,7 @@ public class Game : MonoBehaviour {
 	{
         if (m_bCanPlay)
         {
-            ++nNbTour;
+            ++m_nNbTour;
 
             /*foreach (GameObject hex in temp_HexToColor)
             {
@@ -179,7 +186,7 @@ public class Game : MonoBehaviour {
     [RPC]
     void PlayerFinishTurn()
     {
-        ++nNbPlayerHaveFinishTurn;
+        ++m_nNbPlayerHaveFinishTurn;
     }
 
     [RPC]

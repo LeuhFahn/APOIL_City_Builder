@@ -23,4 +23,9 @@ public class hex : MonoBehaviour {
     {
         m_Batiment = bat;
     }
+
+    public GameObject GetBatiment()
+    {
+        return m_Batiment;
+    }
 }

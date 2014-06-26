@@ -23,6 +23,17 @@ public class CBatiment : MonoBehaviour {
 	
 	}
 
+    public void SetNbLabor(int nNbLabor)
+    {
+        m_nNbLabor = nNbLabor;
+    }
+
+    public int GetNbLabor()
+    {
+        return m_nNbLabor;
+    }
+
+
     public void InitSite(CGestionMenuConstruction.EConstruction type)
     {
         m_nNbLabor = 0;
@@ -45,9 +56,10 @@ public class CBatiment : MonoBehaviour {
     {
         if (m_nNbTurnToConstructionEnd > 0)
         {
-            --m_nNbTurnToConstructionEnd;
+            m_nNbTurnToConstructionEnd -= m_nNbLabor;
         }
-        else if(chantier != null)
+
+        if (m_nNbTurnToConstructionEnd < 0 && chantier != null)
         {
             Color col = chantier.transform.FindChild("Cube").gameObject.renderer.material.color;
             Destroy(chantier);
