@@ -14,8 +14,6 @@ public class Game : MonoBehaviour {
 	int m_nNbTour;
 	int m_nNbHexToColor;
     int m_nNbPlayerHaveFinishTurn;
-    int m_nNbMainDoeuvre;
-    int m_nNbMainDoeuvreDispo;
 
     bool m_bCanPlay;
 
@@ -35,9 +33,6 @@ public class Game : MonoBehaviour {
 		m_nNbHexToColor = 0;
         m_nNbPlayerHaveFinishTurn = 0;
         m_bCanPlay = true;
-        m_nNbMainDoeuvre = 5;
-        m_nNbMainDoeuvreDispo = m_nNbMainDoeuvre;
-
 	}
 	
 	// Update is called once per frame

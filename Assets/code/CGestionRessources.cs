@@ -5,9 +5,12 @@ public class CGestionRessources : MonoBehaviour {
 
     int m_nRessourcesBois;
     int m_nRessourcesPierre;
+    int m_nNbMainDoeuvre;
+    int m_nNbMainDoeuvreDispo;
 
     public UILabel textRessourcesBois;
     public UILabel textRessourcesPierre;
+    public UILabel textRessourcesLabor;
     public UILabel textRessourcesNotEnough;
 
 	// Use this for initialization
@@ -15,6 +18,10 @@ public class CGestionRessources : MonoBehaviour {
     {
         m_nRessourcesBois = 100;
         m_nRessourcesPierre = 20;
+
+        m_nNbMainDoeuvre = 5;
+        m_nNbMainDoeuvreDispo = m_nNbMainDoeuvre;
+
         SetUIText();
 	}
 	
@@ -54,9 +61,21 @@ public class CGestionRessources : MonoBehaviour {
         SetUIText();
     }
 
+    public void AddRemoveLaborDispo(int nLabor)
+    {
+        m_nNbMainDoeuvreDispo += nLabor;
+        SetUIText();
+    }
+
+    public int GetNbLaborDispo()
+    {
+        return m_nNbMainDoeuvreDispo;
+    }
+
     void SetUIText()
     {
         textRessourcesBois.text = m_nRessourcesBois.ToString();
         textRessourcesPierre.text = m_nRessourcesPierre.ToString();
+        textRessourcesLabor.text = m_nNbMainDoeuvreDispo.ToString() + "/" + m_nNbMainDoeuvre.ToString();
     }
 }

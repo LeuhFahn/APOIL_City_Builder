@@ -20,7 +20,14 @@ public class CGestionMenuMainDoeuvre : MonoBehaviour {
     {
         if (gameObject.GetComponent<Game>().menuMainDoeuvre.activeSelf == true)
         {
-            m_nDeltaNbLabor += (int)(10.0f * Input.GetAxis("Mouse ScrollWheel"));
+            if (Input.GetAxis("Mouse ScrollWheel") > 0 && gameObject.GetComponent<CGestionRessources>().GetNbLaborDispo() > m_nDeltaNbLabor)
+            {
+                ++m_nDeltaNbLabor;
+            }
+            if (Input.GetAxis("Mouse ScrollWheel") < 0 && -m_nNbLabor < m_nDeltaNbLabor)
+            {
+                --m_nDeltaNbLabor;
+            }
 
             label_nbDeltaMainDoeuvre.text = m_nDeltaNbLabor.ToString();
             label_nbMainDoeuvre.text = m_nNbLabor.ToString();
@@ -50,6 +57,7 @@ public class CGestionMenuMainDoeuvre : MonoBehaviour {
     public void ValidateAndClose()
     {
         m_caseSelected.GetComponent<hex>().GetBatiment().GetComponent<CBatiment>().SetNbLabor(m_nNbLabor + m_nDeltaNbLabor);
+        gameObject.GetComponent<CGestionRessources>().AddRemoveLaborDispo(-m_nDeltaNbLabor);
         CloseMenu();
     }
 

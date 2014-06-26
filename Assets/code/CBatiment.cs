@@ -9,12 +9,13 @@ public class CBatiment : MonoBehaviour {
 
     public GameObject chantier;
     public GameObject prefabChapelle;
+    GameObject Game;
     GameObject batObj;
 
 	// Use this for initialization
 	void Start () 
     {
-	    
+        Game = GameObject.Find("_Game");
 	}
 	
 	// Update is called once per frame
@@ -70,6 +71,8 @@ public class CBatiment : MonoBehaviour {
             {
                 child.gameObject.renderer.material.color = col;
             }
+
+            Game.GetComponent<CGestionRessources>().AddRemoveLaborDispo(m_nNbLabor);
         }
     }
 }
