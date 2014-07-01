@@ -6,11 +6,22 @@ public class CBatiment : MonoBehaviour {
     CGestionMenuConstruction.EConstruction m_type;
     int m_nNbTurnToConstructionEnd;
     int m_nNbLabor;
+    int m_nUniqueID;
 
     public GameObject chantier;
     public GameObject prefabChapelle;
     GameObject Game;
     GameObject batObj;
+
+    public int GetUniqueID()
+    {
+        return m_nUniqueID;
+    }
+
+    public void SetUniqueID(int nID)
+    {
+        m_nUniqueID = nID;
+    }
 
 	// Use this for initialization
 	void Start () 
@@ -60,19 +71,25 @@ public class CBatiment : MonoBehaviour {
             m_nNbTurnToConstructionEnd -= m_nNbLabor;
         }
 
-        if (m_nNbTurnToConstructionEnd < 0 && chantier != null)
+        if (m_nNbTurnToConstructionEnd <= 0 && chantier != null)
         {
-            Color col = chantier.transform.FindChild("Cube").gameObject.renderer.material.color;
-            Destroy(chantier);
-            batObj = Instantiate(prefabChapelle, gameObject.transform.position, Quaternion.identity) as GameObject;
-            batObj.transform.parent = gameObject.transform;
-
-            foreach (Transform child in batObj.transform)
-            {
-                child.gameObject.renderer.material.color = col;
-            }
-
-            Game.GetComponent<CGestionRessources>().AddRemoveLaborDispo(m_nNbLabor);
+            TransformChantierToBatiment();
+            Game.GetComponent<Game>().TransformChantierToBatimentCallFromNetwork(m_nUniqueID);
         }
+    }
+
+    public void TransformChantierToBatiment()
+    {
+        Color col = chantier.transform.FindChild("Cube").gameObject.renderer.material.color;
+        Destroy(chantier);
+        batObj = Instantiate(prefabChapelle, gameObject.transform.position, Quaternion.identity) as GameObject;
+        batObj.transform.parent = gameObject.transform;
+
+        foreach (Transform child in batObj.transform)
+        {
+            child.gameObject.renderer.material.color = col;
+        }
+
+        Game.GetComponent<CGestionRessources>().AddRemoveLaborDispo(m_nNbLabor);
     }
 }

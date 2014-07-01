@@ -78,7 +78,7 @@ public class Game : MonoBehaviour {
             if (m_nNbPlayerHaveFinishTurn == Network.connections.Length + 1)
             {
                 StartNewTurn();
-                networkView.RPC("StartNewTurnFromNetwork", RPCMode.AllBuffered);
+                networkView.RPC("StartNewTurn", RPCMode.OthersBuffered);
             }
         }
 	}
@@ -100,17 +100,6 @@ public class Game : MonoBehaviour {
         camera.GetComponent<CCamera>().ZoomInOut(5.0f * Input.GetAxis("Mouse ScrollWheel"));
     }
 
-    void StartNewTurn()
-    {
-        ++m_nNbTour;
-        m_nNbPlayerHaveFinishTurn = 0;
-        /*m_bCanPlay = true;
-
-        foreach (GameObject bat in Batiments)
-        {
-            bat.GetComponent<CBatiment>().StartNewTurn();
-        }*/
-    }
     
     Vector3 GetMousePositionInScreen()
     {
@@ -134,7 +123,6 @@ public class Game : MonoBehaviour {
 	{
         if (m_bCanPlay)
         {
-            ++m_nNbTour;
 
             /*foreach (GameObject hex in temp_HexToColor)
             {
@@ -165,6 +153,11 @@ public class Game : MonoBehaviour {
         networkView.RPC("BlockHexFromNetwork", RPCMode.AllBuffered, nId);
     }
 
+    public void TransformChantierToBatimentCallFromNetwork(int nID)
+    {
+        networkView.RPC("TransformChantierToBatiment", RPCMode.OthersBuffered, nID);
+    }
+
 	// All RPC calls need the @RPC attribute!
 	[RPC]
 	void ColorationFromNetwork(int nId)
@@ -185,12 +178,27 @@ public class Game : MonoBehaviour {
     }
 
     [RPC]
-    void StartNewTurnFromNetwork()
+    void StartNewTurn()
     {
+        ++m_nNbTour;
+        m_nNbPlayerHaveFinishTurn = 0;
         m_bCanPlay = true;
+
         foreach (GameObject bat in Batiments)
         {
             bat.GetComponent<CBatiment>().StartNewTurn();
+        }
+    }
+
+    [RPC]
+    public void TransformChantierToBatiment(int nID)
+    {
+        foreach (GameObject bat in Batiments)
+        {
+            if (bat.GetComponent<CBatiment>().GetUniqueID() == nID)
+            {
+                bat.GetComponent<CBatiment>().TransformChantierToBatiment();
+            }
         }
     }
 }

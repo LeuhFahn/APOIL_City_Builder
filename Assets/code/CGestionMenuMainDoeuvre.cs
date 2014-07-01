@@ -6,6 +6,7 @@ public class CGestionMenuMainDoeuvre : MonoBehaviour {
     GameObject m_caseSelected;
     public UILabel label_nbDeltaMainDoeuvre;
     public UILabel label_nbMainDoeuvre;
+    public UILabel label_UniqueID;
 
     int m_nDeltaNbLabor;
     int m_nNbLabor;
@@ -31,6 +32,7 @@ public class CGestionMenuMainDoeuvre : MonoBehaviour {
 
             label_nbDeltaMainDoeuvre.text = m_nDeltaNbLabor.ToString();
             label_nbMainDoeuvre.text = m_nNbLabor.ToString();
+            label_UniqueID.text = m_caseSelected.GetComponent<hex>().GetBatiment().GetComponent<CBatiment>().GetUniqueID().ToString();
         }
 	}
 
